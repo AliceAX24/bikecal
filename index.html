@@ -55,42 +55,88 @@
     <audio id="audioRight" src="audio2.mp3"></audio>
 
     <script>
-        // BUZZ (som de buzina)
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // ======================
+    // WAKE LOCK (manter tela ligada)
+    // ======================
+    let wakeLock = null;
 
-        function playBuzz() {
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
+    async function keepScreenAwake() {
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+            console.log("Tela mantida ligada 🔆");
 
-            oscillator.type = "sawtooth";
-            oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
-
-            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(
-                0.01,
-                audioContext.currentTime + 0.5
-            );
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.5);
+            wakeLock.addEventListener("release", () => {
+                console.log("Wake Lock liberado");
+                wakeLock = null;
+            });
+        } catch (err) {
+            console.error("Wake Lock erro:", err);
         }
+    }
 
-        document.getElementById("buzz").addEventListener("click", playBuzz);
+    function ensureWakeLock() {
+        if ("wakeLock" in navigator && !wakeLock) {
+            keepScreenAwake();
+        }
+    }
 
-        // MP3s
-        document.getElementById("left").addEventListener("click", () => {
-            document.getElementById("audioLeft").currentTime = 0;
-            document.getElementById("audioLeft").play();
-        });
+    // ======================
+    // BUZZ (som de buzina)
+    // ======================
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-        document.getElementById("right").addEventListener("click", () => {
-            document.getElementById("audioRight").currentTime = 0;
-            document.getElementById("audioRight").play();
-        });
-    </script>
+    function playBuzz() {
+        ensureWakeLock(); // ativa wake lock no primeiro toque
+
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.type = "sawtooth";
+        oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+
+        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+            0.01,
+            audioContext.currentTime + 0.5
+        );
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.5);
+    }
+
+    document.getElementById("buzz").addEventListener("click", playBuzz);
+
+    // ======================
+    // MP3s
+    // ======================
+    document.getElementById("left").addEventListener("click", () => {
+        ensureWakeLock();
+
+        const audio = document.getElementById("audioLeft");
+        audio.currentTime = 0;
+        audio.play();
+    });
+
+    document.getElementById("right").addEventListener("click", () => {
+        ensureWakeLock();
+
+        const audio = document.getElementById("audioRight");
+        audio.currentTime = 0;
+        audio.play();
+    });
+
+    // ======================
+    // Reativa se o usuário voltar para a aba
+    // ======================
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+            ensureWakeLock();
+        }
+    });
+</script>
 
 </body>
 </html>
