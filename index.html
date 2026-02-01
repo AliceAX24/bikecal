@@ -92,7 +92,7 @@
         const gainNode = audioContext.createGain();
 
         oscillator.type = "sawtooth";
-        oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(432, audioContext.currentTime);
 
         gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(
