@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Buzz Site</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #111;
+            font-family: Arial, sans-serif;
+        }
+
+        button {
+            font-size: 24px;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #ffcc00;
+            color: #000;
+        }
+
+        #buzz {
+            margin-bottom: 60px;
+            font-size: 32px;
+        }
+
+        .bottom-buttons {
+            display: flex;
+            gap: 40px;
+        }
+
+        .arrow {
+            width: 100px;
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="buzz">Buzz</button>
+
+    <div class="bottom-buttons">
+        <button class="arrow" id="left">⬅️</button>
+        <button class="arrow" id="right">➡️</button>
+    </div>
+
+    <!-- Audios MP3 -->
+    <audio id="audioLeft" src="audio1.mp3"></audio>
+    <audio id="audioRight" src="audio2.mp3"></audio>
+
+    <script>
+        // BUZZ (som de buzina)
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playBuzz() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.type = "sawtooth";
+            oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+
+            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(
+                0.01,
+                audioContext.currentTime + 0.5
+            );
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        document.getElementById("buzz").addEventListener("click", playBuzz);
+
+        // MP3s
+        document.getElementById("left").addEventListener("click", () => {
+            document.getElementById("audioLeft").currentTime = 0;
+            document.getElementById("audioLeft").play();
+        });
+
+        document.getElementById("right").addEventListener("click", () => {
+            document.getElementById("audioRight").currentTime = 0;
+            document.getElementById("audioRight").play();
+        });
+    </script>
+
+</body>
+</html>
