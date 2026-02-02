@@ -4,42 +4,49 @@
     <meta charset="UTF-8">
     <title>Buzz Site</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: #111;
-            font-family: Arial, sans-serif;
-        }
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background: #111;
+        font-family: Arial, sans-serif;
 
-        button {
-            font-size: 24px;
-            padding: 20px 40px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            background: #ffcc00;
-            color: #000;
-        }
+        /* evita zoom por gestos em alguns navegadores */
+        touch-action: manipulation;
+    }
 
-        #buzz {
-            margin-bottom: 60px;
-            font-size: 32px;
-        }
+    button {
+        font-size: 36px;
+        padding: 30px 60px;
+        border: none;
+        border-radius: 16px;
+        cursor: pointer;
+        background: #ffcc00;
+        color: #000;
 
-        .bottom-buttons {
-            display: flex;
-            gap: 40px;
-        }
+        /* tamanho fixo e estável */
+        width: 320px;
+        max-width: 90vw;
+    }
 
-        .arrow {
-            width: 100px;
-            font-size: 40px;
-        }
-    </style>
+    #buzz {
+        margin-bottom: 30px;
+        font-size: 40px;
+    }
+
+    .bottom-buttons {
+        display: flex;
+        flex-direction: column; /* 🔽 um embaixo do outro */
+        gap: 30px;
+    }
+
+    .arrow {
+        font-size: 48px;
+    }
+</style>
 </head>
 <body>
 
